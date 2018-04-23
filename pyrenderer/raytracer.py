@@ -118,7 +118,7 @@ def render(scene, eye, image):
         # change randomly the sample position inside the pixel, antialiasing
         aa_samples = 1
         radiances = []
-        for _ in xrange(aa_samples):
+        for _ in range(aa_samples):
             #ray = Ray(eye, im_point + Vector3D((random() - .5) / image.w, (random() - .5) / image.h, 0) - eye)
             ray = Ray(eye, im_point - eye)
             radiances.append(trace(scene, ray))
@@ -136,7 +136,7 @@ def trace_ray(i, j, eye, scene):
     # change randomly the sample position inside the pixel, antialiasing
     aa_samples = 16
     radiances = []
-    for _ in xrange(aa_samples):
+    for _ in range(aa_samples):
         ray = Ray(eye, im_point + Vector3D((random() - .5) / 200, (random() - .5) / 200, 0) - eye)
         radiances.append(trace(scene, ray))
 

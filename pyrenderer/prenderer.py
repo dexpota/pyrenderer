@@ -63,7 +63,7 @@ class Scene:
 
     def intersect(self, ray):
         hits = [s.intersect(ray) for s in self.objects]
-        hits = filter(None, hits)
+        hits = list(filter(None, hits))
 
         if hits:
             hits = sorted(hits, key=lambda h: h.t0)

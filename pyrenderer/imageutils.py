@@ -43,7 +43,7 @@ class ImageIterator:
         self.current = start
         self.image = image
 
-    def next(self):
+    def __next__(self):
         if self.current >= self.end:
             raise StopIteration()
         else:
@@ -51,11 +51,14 @@ class ImageIterator:
             self.current += 1
             return pixel
 
+    def next(self):
+        self.__next__(self)
+
 
 class Image:
     def __init__(self):
-        self.w = 200
-        self.h = 200
+        self.w = 128
+        self.h = 128
 
         self.pixels = [Pixel(i, j) for i in range(0, self.w) for j in range(0, self.h)]
 
@@ -76,7 +79,7 @@ class Image:
             buff.append(min(255, int(px.b/max_value * 255)))
 
         pgmHeader = 'P6' + '\n' + str(self.w) + '  ' + str(self.h) + '  ' + str(255) + '\n'
-        fout.write(pgmHeader)
+        fout.write(pgmHeader.encode())
         buff.tofile(fout)
         fout.close()
 
