@@ -11,3 +11,4 @@ tqdm = "*"
 
 [dev-packages]
 coala = "*"
+coala-bears = "*"
