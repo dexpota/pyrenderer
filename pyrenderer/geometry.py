@@ -13,19 +13,18 @@ class Sphere:
     def color(self):
         return self.c
 
-
     def intersect(self, ray):
         hit = None
 
         po = ray.origin - self.center
 
-        delta = (2*ray.direction.dot(po))**2 - 4*ray.direction.norm2()*(po.norm2() - self.radius**2)
+        delta = ((2*ray.direction.dot(po))**2
+                 - 4*ray.direction.norm2()*(po.norm2() - self.radius**2))
 
         if delta > 0:
             b = 2 * ray.direction.dot(po)
             t0 = (-b + (delta) ** .5) / (2*ray.direction.norm2())
             t1 = (-b - (delta) ** .5) / (2*ray.direction.norm2())
-
 
             if 0 < t0 and (t0 < t1 or t1 < 0):
                 hit = Hit(self, ray, t0)
@@ -39,7 +38,6 @@ class Sphere:
                 return hit
 
         return hit
-
 
     def reflection(self, point, incoming_direction, outgoing_direction):
         return self.c / math.pi

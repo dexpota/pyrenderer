@@ -2,7 +2,6 @@ from tqdm import tqdm
 from mathutils import Point3D, Vector3D, Ray, uniform_over_hemisphere
 from random import random
 from imageutils import Color
-from geometry import Sphere, Plane
 import math
 
 
@@ -36,9 +35,9 @@ def direct_illumination(scene, hit):
             continue
 
         # light radiance from position in direction
-        contribution = light.emission(light.position, incoming_direction) * \
-                       hit.obj.reflection(point, incoming_direction, outgoing_direction) * \
-                       hit.normal.dot(incoming_direction)
+        contribution = (light.emission(light.position, incoming_direction)
+                        * hit.obj.reflection(point, incoming_direction, outgoing_direction)
+                        * hit.normal.dot(incoming_direction))
 
         shadow_ray = Ray(point + incoming_direction*0.001, incoming_direction)
         distance = (light.position - point).norm()
@@ -73,9 +72,11 @@ def indirect_illumination(scene, hit, depth):
         # from local to global coordinates
         normal = hit.normal
         if abs(normal.x) > abs(normal.y):
-            tangent = Vector3D(normal.z, 0, -normal.x) / math.sqrt(normal.dot(normal))
+            tangent = (Vector3D(normal.z, 0, -normal.x)
+                       / math.sqrt(normal.dot(normal)))
         else:
-            tangent = Vector3D(0, -normal.z, normal.y) / math.sqrt(normal.dot(normal))
+            tangent = (Vector3D(0, -normal.z, normal.y)
+                       / math.sqrt(normal.dot(normal)))
         nb = normal.cross(tangent)
 
         incoming_direction = Vector3D(
@@ -87,7 +88,9 @@ def indirect_illumination(scene, hit, depth):
         new_ray = Ray(point + incoming_direction * 0.001, incoming_direction)
 
         incoming_radiance = trace(scene, new_ray, depth + 1)
-        v = incoming_radiance * hit.obj.reflection(point, incoming_direction, outgoing_direction) * hit.normal.dot(incoming_direction)
+        v = (incoming_radiance
+             * hit.obj.reflection(point, incoming_direction, outgoing_direction)
+             * hit.normal.dot(incoming_direction))
         radiance = radiance + v
 
     radiance = radiance / float(n) * (2 * math.pi)
@@ -98,9 +101,6 @@ def trace(scene, ray, depth=0):
     hit = scene.intersect(ray)
 
     if hit is not None:
-        # output a simple color
-        #return hit.obj.color()
-
         # compute the radiance
         return direct_illumination(scene, hit) + indirect_illumination(scene, hit, depth)
     else:
@@ -112,14 +112,14 @@ def render(scene, eye, image):
     for pixel in tqdm(image):
         # center point on each pixel i, j
         # mirror y coordinate because the image origin is on top
-        # mirror y coordinate because the image origin is on top
-        im_point = Point3D(float(pixel.j)/image.w - 0.5, -(float(pixel.i)/image.h - 0.5), -1)
+        im_point = Point3D(float(pixel.j)/image.w - 0.5,
+                           -(float(pixel.i)/image.h - 0.5), -1)
 
         # change randomly the sample position inside the pixel, antialiasing
         aa_samples = 1
         radiances = []
         for _ in range(aa_samples):
-            #ray = Ray(eye, im_point + Vector3D((random() - .5) / image.w, (random() - .5) / image.h, 0) - eye)
+            # ray = Ray(eye, im_point + Vector3D((random() - .5) / image.w, (random() - .5) / image.h, 0) - eye)
             ray = Ray(eye, im_point - eye)
             radiances.append(trace(scene, ray))
 
@@ -130,6 +130,7 @@ def render(scene, eye, image):
         pixel.g = radiance.g
         pixel.b = radiance.b
 
+
 def trace_ray(i, j, eye, scene):
     im_point = Point3D(float(j) / 200 - 0.5, -(float(i) / 200 - 0.5), -1)
 
@@ -137,8 +138,12 @@ def trace_ray(i, j, eye, scene):
     aa_samples = 16
     radiances = []
     for _ in range(aa_samples):
-        ray = Ray(eye, im_point + Vector3D((random() - .5) / 200, (random() - .5) / 200, 0) - eye)
+        ray = Ray(eye,
+                  im_point + Vector3D((random() - .5) / 200,
+                                      (random() - .5) / 200,
+                                      0) - eye)
         radiances.append(trace(scene, ray))
 
     # mean radiance between all samples
-    radiance = sum(radiances, Color(0, 0, 0)) / aa_samples
+    radiance = (sum(radiances, Color(0, 0, 0))
+                / aa_samples)

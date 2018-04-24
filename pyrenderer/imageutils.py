@@ -1,5 +1,6 @@
 import array
 
+
 class Color:
     def __init__(self, r, g, b):
         self.r = r
@@ -26,6 +27,7 @@ class Color:
 
     def __truediv__(self, num):
         return Color(self.r/num, self.g/num, self.b/num)
+
 
 class Pixel:
     def __init__(self, i, j):
@@ -60,7 +62,8 @@ class Image:
         self.w = 128
         self.h = 128
 
-        self.pixels = [Pixel(i, j) for i in range(0, self.w) for j in range(0, self.h)]
+        self.pixels = [Pixel(i, j) for i in range(0, self.w)
+                       for j in range(0, self.h)]
 
     def write(self, filename):
         fout = open(filename, 'wb')
@@ -72,13 +75,15 @@ class Image:
             if mv > max_value:
                 max_value = mv
 
-        buff=array.array('B')
+        buff = array.array('B')
         for px in self.pixels:
             buff.append(min(255, int(px.r/max_value * 255)))
             buff.append(min(255, int(px.g/max_value * 255)))
             buff.append(min(255, int(px.b/max_value * 255)))
 
-        pgmHeader = 'P6' + '\n' + str(self.w) + '  ' + str(self.h) + '  ' + str(255) + '\n'
+        pgmHeader = ('P6' + '\n' + str(self.w) +
+                     '  ' + str(self.h) +
+                     '  ' + str(255) + '\n')
         fout.write(pgmHeader.encode())
         buff.tofile(fout)
         fout.close()
@@ -90,11 +95,11 @@ class Image:
         string = ""
         for i, px in enumerate(self.pixels):
             if px.r != 0:
-                string += "%d"%px.r
+                string += "%d" % px.r
             else:
                 string += "_"
 
-            if (i+1) % (self.w) == 0:
+            if (i+1) % self.w == 0:
                 string += "\n"
 
         return string

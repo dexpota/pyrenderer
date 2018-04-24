@@ -1,6 +1,7 @@
 from __future__ import division
 import math
 
+
 class Vector3D(object):
     def __init__(self, x, y, z):
         self.x = x
