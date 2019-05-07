@@ -11,5 +11,4 @@ tqdm = "*"
 
 [dev-packages]
 coala = "*"
-coala-bears = "*"
 autoflake = "~=0.6.6"
